@@ -1,4 +1,4 @@
---Using the columns of ìmarket_factî, ìcust_dimenî, ìorders_dimenî,ìprod_dimenî, ìshipping_dimenî, Create a new table, named asìcombined_tableî.
+--Using the columns of ‚Äúmarket_fact‚Äù, ‚Äúcust_dimen‚Äù, ‚Äúorders_dimen‚Äù,‚Äúprod_dimen‚Äù, ‚Äúshipping_dimen‚Äù, Create a new table, named as‚Äúcombined_table‚Äù.
 
 select A.Cust_ID,Customer_Name,Order_ID,Province,Region,Customer_Segment,B.Prod_ID,B.Ship_ID,Sales,Discount,Order_Quantity,Product_Base_Margin,
 C.Order_Date,Order_Priority,Product_Category,Product_Sub_Category,Ship_Mode,Ship_Date
@@ -30,7 +30,9 @@ alter table combinedtable
 
 update combinedtable
 		set DaysTakenForShipping = datediff(Order_Date,Ship_Date)
--- Find the customer whose order took the maximum time to get shipping.select distinct Customer_Name,DaysTakenForShipping
+-- Find the customer whose order took the maximum time to get shipping
+
+select distinct Customer_Name,DaysTakenForShipping
 from combinedtable
 where DaysTakenForShipping =
 		(select max(DaysTakenForShipping)
@@ -56,7 +58,8 @@ pivot
 	(count(Cust_ID) for [month]  in ([1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12])) pvt_table
 
 --Write a query to return for each user the time elapsed between the first purchasing and the third purchasing, in ascending order by Customer ID.
-
+
+
 with t1 as
 (
 select distinct Cust_ID,Order_Date,min(Order_Date) over (partition by Cust_ID) first_order,dense_rank() over (partition by Cust_ID  order by Order_Date) rank_order
@@ -91,12 +94,12 @@ select distinct Cust_ID,sum(purc_Prod_11) over (partition by Cust_ID) total_11,(
 from t2
 
 ---------PART TWO----------------------
---Create a ìviewî that keeps visit logs of customers on a monthly basis. (For each log, three field is kept: Cust_id, Year, Month)
+--Create a ‚Äúview‚Äù that keeps visit logs of customers on a monthly basis. (For each log, three field is kept: Cust_id, Year, Month)
 
 Create view cust_logs as
 select distinct Cust_ID,year(Order_Date) [year],month(Order_Date) [month]
 from combinedtable
---Create a ìviewî that keeps the number of monthly visits by users. (Show separately all months from the beginning business)
+--Create a ‚Äúview‚Äù that keeps the number of monthly visits by users. (Show separately all months from the beginning business)
 create view num_ord_bymonths as
 select distinct Cust_ID,Order_ID,Order_Date,year(Order_Date) [year],month(Order_Date) month_num,count(Order_ID) over (partition by Cust_ID,year(Order_Date),month(Order_Date)) num_orders
 from combinedtable
