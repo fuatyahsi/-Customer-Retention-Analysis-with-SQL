@@ -190,7 +190,7 @@ begin
 					where year(Order_Date) = @y and month(Order_Date) = @m)*1.00)
 end
 
----example
+----example
 select [dbo].[Month_Wise_Retention_Rate](9,2012) tenth_month_retention_rate
 
 
